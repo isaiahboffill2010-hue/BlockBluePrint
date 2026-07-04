@@ -17,10 +17,9 @@
     "noEmit": true,
     "jsx": "preserve",
     "ignoreDeprecations": "5.0",
-    "baseUrl": ".",
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
       ]
     },
     "types": [

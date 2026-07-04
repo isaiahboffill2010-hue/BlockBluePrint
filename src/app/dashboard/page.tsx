@@ -165,6 +165,7 @@ export default function DashboardPage() {
   const viewKey = activeView.toLowerCase();
   const activeViewUrl =
     blueprintContent?.views?.[activeView] ?? blueprintContent?.views?.[viewKey] ?? blueprintContent?.preview_image_url ?? null;
+  const hasGeneratedWorkspace = Boolean(activeBlueprint && blueprintContent);
 
   async function handleGenerate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -276,7 +277,13 @@ export default function DashboardPage() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_5%,rgba(16,185,129,0.16),transparent_24%),radial-gradient(circle_at_82%_18%,rgba(45,212,191,0.08),transparent_22%),linear-gradient(180deg,rgba(255,255,255,0.035),transparent_55%)]" />
       <div className="pointer-events-none absolute inset-0 bg-hero-grid opacity-[0.13]" />
 
-      <div className="relative mx-auto grid min-h-screen max-w-[1780px] grid-cols-1 gap-5 p-3 sm:p-5 xl:grid-cols-[280px_minmax(0,1fr)_430px] 2xl:grid-cols-[300px_minmax(0,1fr)_500px]">
+      <div
+        className={`relative mx-auto grid min-h-screen max-w-[1880px] grid-cols-1 gap-4 p-3 sm:p-5 ${
+          hasGeneratedWorkspace
+            ? 'xl:grid-cols-[240px_minmax(0,1fr)] 2xl:grid-cols-[250px_minmax(0,1fr)]'
+            : 'xl:grid-cols-[250px_minmax(0,1fr)_390px] 2xl:grid-cols-[270px_minmax(0,1fr)_440px]'
+        }`}
+      >
         <Sidebar
           projects={projects}
           activeBlueprint={activeBlueprint}
@@ -324,7 +331,7 @@ export default function DashboardPage() {
           )}
         </section>
 
-        <RightPanel hidden={Boolean(activeBlueprint && blueprintContent)} />
+        <RightPanel hidden={hasGeneratedWorkspace} />
       </div>
     </main>
   );
@@ -348,29 +355,29 @@ function Sidebar({
   onLogout: () => void;
 }) {
   return (
-    <aside className="flex min-h-[calc(100vh-1.5rem)] flex-col overflow-hidden rounded-[28px] border border-white/10 bg-[#0b1015]/82 shadow-[0_24px_120px_-70px_rgba(0,0,0,0.95)] backdrop-blur-2xl sm:min-h-[calc(100vh-2.5rem)]">
-      <div className="space-y-7 p-5">
+    <aside className="flex min-h-[calc(100vh-1.5rem)] flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0b1015]/82 shadow-[0_24px_120px_-70px_rgba(0,0,0,0.95)] backdrop-blur-2xl sm:min-h-[calc(100vh-2.5rem)]">
+      <div className="space-y-5 p-4">
         <div className="flex items-center gap-3">
-          <Logo className="h-14 w-14 rounded-2xl" />
+          <Logo className="h-12 w-12 rounded-2xl" />
           <div className="min-w-0">
-            <p className="truncate text-[13px] font-semibold uppercase tracking-[0.34em] text-emerald-300">BlockBlueprint</p>
-            <p className="text-sm text-slate-200">AI Blueprint Studio</p>
+            <p className="truncate text-[11px] font-semibold uppercase tracking-[0.3em] text-emerald-300">BlockBlueprint</p>
+            <p className="text-xs text-slate-200">AI Blueprint Studio</p>
           </div>
         </div>
 
         <button
           type="button"
           onClick={onNew}
-          className="inline-flex h-14 w-full items-center justify-center gap-3 rounded-xl border border-emerald-300/25 bg-gradient-to-b from-emerald-400 to-emerald-600 text-sm font-semibold text-white shadow-[0_18px_50px_-24px_rgba(16,185,129,0.95)] transition hover:-translate-y-0.5 hover:shadow-[0_24px_70px_-28px_rgba(16,185,129,0.95)]"
+          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-emerald-300/25 bg-gradient-to-b from-emerald-400 to-emerald-600 text-sm font-semibold text-white shadow-[0_18px_50px_-24px_rgba(16,185,129,0.95)] transition hover:-translate-y-0.5 hover:shadow-[0_24px_70px_-28px_rgba(16,185,129,0.95)]"
         >
           <Plus className="h-5 w-5" />
           New Blueprint
         </button>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col px-5 pb-5">
-        <div className="mb-4 flex items-center justify-between">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Your Blueprints</p>
+      <div className="flex min-h-0 flex-1 flex-col px-4 pb-4">
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">Your Blueprints</p>
           <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] text-slate-400">{projectCount}</span>
         </div>
 
@@ -394,16 +401,16 @@ function Sidebar({
                   key={project.id}
                   type="button"
                   onClick={() => onSelect(project)}
-                  className={`w-full rounded-2xl border p-4 text-left transition hover:-translate-y-0.5 ${
+                  className={`w-full rounded-2xl border p-3 text-left transition hover:-translate-y-0.5 ${
                     activeBlueprint?.id === project.id
                       ? 'border-emerald-300/35 bg-emerald-400/[0.09]'
                       : 'border-white/10 bg-white/[0.035] hover:border-emerald-300/25 hover:bg-white/[0.06]'
                   }`}
                 >
                   <p className="truncate text-sm font-semibold text-white">{project.name ?? project.blueprint_data?.name ?? project.prompt}</p>
-                  <div className="mt-2 flex items-center justify-between gap-3 text-xs text-slate-500">
+                  <div className="mt-2 flex items-center justify-between gap-2 text-xs text-slate-500">
                     <span>{formatProjectDate(project.updated_at ?? project.created_at)}</span>
-                    <span className="rounded-full bg-white/[0.06] px-2 py-0.5 uppercase tracking-[0.18em] text-slate-400">{project.status}</span>
+                    <span className="rounded-full bg-white/[0.06] px-2 py-0.5 uppercase tracking-[0.14em] text-slate-400">{project.status}</span>
                   </div>
                 </button>
               ))}
@@ -412,13 +419,13 @@ function Sidebar({
         </div>
       </div>
 
-      <div className="border-t border-white/10 p-5">
+      <div className="border-t border-white/10 p-4">
         <div className="space-y-1">
           <SidebarAction icon={<Settings className="h-5 w-5" />} label="Settings" disabled />
           <SidebarAction icon={<UserCircle className="h-5 w-5" />} label="Account" disabled />
           <SidebarAction icon={<LogOut className="h-5 w-5" />} label="Logout" onClick={onLogout} />
         </div>
-        <div className="mt-5 flex items-center justify-between rounded-2xl bg-white/[0.035] p-3">
+        <div className="mt-4 flex items-center justify-between rounded-2xl bg-white/[0.035] p-3">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
               <UserCircle className="h-6 w-6 text-slate-400" />
@@ -579,19 +586,9 @@ function RightPanel({ hidden }: { hidden: boolean }) {
 
 function OnboardingPreview() {
   return (
-    <div className="relative aspect-[1.5] overflow-hidden bg-[linear-gradient(180deg,#9ed8ff_0%,#f8c17f_42%,#24483a_43%,#17251f_100%)]">
-      <div className="absolute inset-x-0 top-[18%] h-[30%] bg-[linear-gradient(135deg,transparent_0_18%,rgba(255,255,255,0.58)_18%_21%,transparent_21%_34%,rgba(255,255,255,0.38)_34%_37%,transparent_37%)] opacity-60" />
-      <div className="absolute bottom-0 left-0 right-0 h-[48%] bg-[linear-gradient(90deg,rgba(20,83,45,0.65)_25%,transparent_25%_50%,rgba(21,128,61,0.55)_50%_75%,transparent_75%),linear-gradient(0deg,rgba(22,101,52,0.7)_25%,transparent_25%_50%,rgba(34,197,94,0.28)_50%_75%,transparent_75%)] bg-[length:58px_58px]" />
-      <div className="absolute bottom-[18%] left-1/2 h-[44%] w-[54%] -translate-x-1/2 rounded-t-[24px] border border-white/20 bg-[linear-gradient(90deg,#5c6470_0_18%,#29313a_18%_23%,#7a8490_23%_40%,#8a592f_40%_62%,#3b4652_62%_68%,#606b76_68%_100%)] shadow-[0_30px_70px_rgba(0,0,0,0.5)]" />
-      <div className="absolute bottom-[42%] left-[28%] h-[30%] w-[12%] rounded-t-2xl bg-[#1f2933] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]" />
-      <div className="absolute bottom-[42%] right-[28%] h-[30%] w-[12%] rounded-t-2xl bg-[#1f2933] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)]" />
-      <div className="absolute bottom-[55%] left-[26.5%] h-[13%] w-[15%] rotate-45 bg-[#2f2117]" />
-      <div className="absolute bottom-[55%] right-[26.5%] h-[13%] w-[15%] rotate-45 bg-[#2f2117]" />
-      <div className="absolute bottom-[62%] left-[51%] h-[26%] w-[26%] -translate-x-1/2 rotate-45 rounded-sm bg-[#3f2a1a]" />
-      <div className="absolute bottom-[18%] left-[44%] h-[21%] w-[12%] rounded-t-xl bg-[#21160f]" />
-      <div className="absolute bottom-[33%] left-[35%] h-[9%] w-[7%] bg-amber-300/70" />
-      <div className="absolute bottom-[33%] right-[35%] h-[9%] w-[7%] bg-amber-300/70" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_15%,rgba(255,255,255,0.35),transparent_24%),linear-gradient(180deg,transparent,rgba(7,10,14,0.18))]" />
+    <div className="relative aspect-[1.5] overflow-hidden bg-black/20">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/house.png" alt="Minecraft house preview" className="h-full w-full object-cover" />
     </div>
   );
 }
@@ -665,7 +662,7 @@ function GeneratedWorkspace({
       className="space-y-5"
     >
       <section className="rounded-[28px] border border-white/10 bg-[#0d1217]/78 p-5 shadow-[0_24px_120px_-80px_rgba(0,0,0,0.95)] backdrop-blur-2xl sm:p-7">
-        <div className="grid gap-6 2xl:grid-cols-[minmax(0,1.1fr)_360px]">
+        <div className="grid gap-6 2xl:grid-cols-[minmax(0,1fr)_340px]">
           <div className="min-w-0">
             <div className="mb-5 flex flex-wrap items-center gap-3">
               <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-300">
@@ -674,7 +671,7 @@ function GeneratedWorkspace({
               <span className="text-sm text-slate-500">Last edited {formatProjectDate(blueprint.updated_at ?? blueprint.created_at)}</span>
             </div>
             <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">{content.name ?? blueprint.name ?? 'Untitled Blueprint'}</h1>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-slate-400">{content.description ?? content.overview ?? 'No description was returned for this blueprint.'}</p>
+            <p className="mt-4 max-w-5xl text-base leading-7 text-slate-400">{content.description ?? content.overview ?? 'No description was returned for this blueprint.'}</p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {overviewItems.map((item) => (
@@ -699,7 +696,7 @@ function GeneratedWorkspace({
         </div>
       </section>
 
-      <section className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_360px]">
+      <section className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="rounded-[28px] border border-white/10 bg-[#0d1217]/78 p-5 shadow-[0_24px_120px_-80px_rgba(0,0,0,0.95)] backdrop-blur-2xl sm:p-7">
           <div className="mb-5 flex flex-wrap gap-2">
             {BLUEPRINT_VIEWS.map((view) => (
@@ -730,7 +727,7 @@ function GeneratedWorkspace({
         <div className="rounded-[28px] border border-white/10 bg-[#0d1217]/78 p-5 shadow-[0_24px_120px_-80px_rgba(0,0,0,0.95)] backdrop-blur-2xl sm:p-6">
           <h2 className="mb-4 text-lg font-semibold text-white">Materials</h2>
           {materials.length ? (
-            <div className="max-h-[520px] space-y-2 overflow-y-auto pr-1">
+            <div className="grid max-h-[520px] gap-2 overflow-y-auto pr-1 sm:grid-cols-2 2xl:grid-cols-1">
               {materials.map((material) => (
                 <div key={`${material.label}-${material.count}`} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-3">
                   <span className="text-sm text-slate-300">{material.label}</span>
@@ -790,7 +787,7 @@ function GeneratedWorkspace({
         <p className="mt-2 text-sm text-slate-500">Open one construction phase at a time.</p>
 
         {sections.length ? (
-          <div className="mt-6 space-y-3">
+          <div className="mt-6 grid gap-3 xl:grid-cols-2">
             {sections.map((section, index) => (
               <SectionAccordion
                 key={`${section.title}-${index}`}
@@ -846,7 +843,7 @@ function ImageStagePanel({
         <img
           src={imageUrl}
           alt={label}
-          className="relative h-full max-h-[620px] w-full object-cover"
+          className="relative h-full max-h-[620px] w-full object-contain p-3"
           onLoad={() => console.log('[BlockBlueprint image] ✓ Frontend loaded image', { label })}
           onError={(event) => {
             console.error('[BlockBlueprint image] Frontend image failed to load:', {
@@ -908,7 +905,7 @@ function SectionAccordion({
   onRetryImages: () => void;
 }) {
   return (
-    <div className="overflow-hidden rounded-3xl border border-white/10 bg-black/18">
+    <div className={`overflow-hidden rounded-3xl border border-white/10 bg-black/18 ${expanded ? 'xl:col-span-2' : ''}`}>
       <button type="button" onClick={onToggle} className="flex w-full items-center gap-4 p-4 text-left transition hover:bg-white/[0.035]">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-emerald-300/20 bg-emerald-400/10 text-sm font-semibold text-emerald-300">
           {index + 1}
@@ -923,8 +920,8 @@ function SectionAccordion({
       </button>
 
       {expanded ? (
-        <div className="grid gap-5 border-t border-white/10 p-4 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <div className="min-h-[300px] rounded-3xl border border-white/10 bg-[#07100d] p-5">
+        <div className="grid gap-5 border-t border-white/10 p-4 xl:grid-cols-[minmax(420px,0.95fr)_minmax(0,1fr)] 2xl:grid-cols-[minmax(520px,0.9fr)_minmax(0,1fr)]">
+          <div className="rounded-3xl border border-white/10 bg-[#07100d] p-5">
             <div className="mb-5 flex items-center justify-between">
               <p className="font-semibold text-white">Blueprint Diagram</p>
               <span className="text-xs text-slate-500">Layer detail</span>
@@ -934,7 +931,7 @@ function SectionAccordion({
               imageStatus={imageStatus}
               imageError={imageError}
               label={`${section.title} diagram`}
-              minHeight="min-h-[250px]"
+              minHeight="min-h-[340px]"
               onRetry={onRetryImages}
             />
           </div>
